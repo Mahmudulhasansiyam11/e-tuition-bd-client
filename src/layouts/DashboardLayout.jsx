@@ -43,10 +43,10 @@
 //   return (
 //     <div className="flex min-h-screen bg-gray-100">
 //       {/* --------------------------
-//           SIDEBAR 
+//           SIDEBAR
 //       -------------------------- */}
 //       <aside
-//         className={`fixed top-0 left-0 h-full w-64 p-6 shadow-xl transition-all duration-300 z-50 
+//         className={`fixed top-0 left-0 h-full w-64 p-6 shadow-xl transition-all duration-300 z-50
 //           bg-[#0A1F4A] text-white border-r border-blue-900
 //           ${sidebarOpen ? "translate-x-0" : "-translate-x-64"}
 //           lg:translate-x-0`}
@@ -67,7 +67,7 @@
 //               to={item.path}
 //               className={({ isActive }) =>
 //                 `flex items-center gap-3 px-4 py-3 rounded-lg font-medium
-//                 transition-all duration-300 
+//                 transition-all duration-300
 //                 ${
 //                   isActive
 //                     ? "bg-white text-[#0A1F4A] shadow-lg"
@@ -142,12 +142,16 @@
 
 // export default DashboardLayout;
 
-
 import { useState } from "react";
 import { Link, NavLink, Outlet } from "react-router";
 import { FiMenu } from "react-icons/fi";
-import { FaUser, FaMoneyBill, FaBook, FaChalkboardTeacher } from "react-icons/fa";
-import { MdPostAdd, MdOutlinePayments } from "react-icons/md";
+import {
+  FaUser,
+  FaMoneyBill,
+  FaBook,
+  FaChalkboardTeacher,
+} from "react-icons/fa";
+import { MdPostAdd, MdOutlinePayments, MdHome } from "react-icons/md";
 import { RiDashboardFill } from "react-icons/ri";
 import { HiUsers } from "react-icons/hi";
 
@@ -164,18 +168,34 @@ const DashboardLayout = () => {
   const studentMenu = [
     { path: "my-tuitions", label: "My Tuitions", icon: <FaBook /> },
     { path: "post-tuition", label: "Post New Tuition", icon: <MdPostAdd /> },
-    { path: "applied-tutors", label: "Applied Tutors", icon: <FaChalkboardTeacher /> },
+    {
+      path: "applied-tutors",
+      label: "Applied Tutors",
+      icon: <FaChalkboardTeacher />,
+    },
     { path: "payments", label: "Payments", icon: <MdOutlinePayments /> },
   ];
 
   const tutorMenu = [
-    { path: "my-applications", label: "My Applications", icon: <FaChalkboardTeacher /> },
+    {
+      path: "my-applications",
+      label: "My Applications",
+      icon: <FaChalkboardTeacher />,
+    },
     { path: "ongoing-tuitions", label: "Ongoing Tuitions", icon: <FaBook /> },
-    { path: "revenue-history", label: "Revenue History", icon: <FaMoneyBill /> },
+    {
+      path: "revenue-history",
+      label: "Revenue History",
+      icon: <FaMoneyBill />,
+    },
   ];
 
   const adminMenu = [
-    { path: "statistics", label: "Admin Statistics", icon: <RiDashboardFill /> },
+    {
+      path: "statistics",
+      label: "Admin Statistics",
+      icon: <RiDashboardFill />,
+    },
     { path: "manage-users", label: "Manage Users", icon: <HiUsers /> },
     { path: "manage-tuitions", label: "Manage Tuitions", icon: <FaBook /> },
   ];
@@ -192,7 +212,6 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100 relative">
-
       {/* MOBILE OVERLAY */}
       {sidebarOpen && (
         <div
@@ -213,12 +232,15 @@ const DashboardLayout = () => {
         <Link
           to="/"
           onClick={handleMenuClick}
-          className="text-3xl font-bold tracking-wide mb-10 block text-white"
+          className="flex items-center gap-3 text-3xl bg-blue-900 px-4 py-2 rounded-lg font-bold tracking-wide mb-10 text-white"
         >
-          Tuition BD
+          <MdHome size={28} />
+          <span className="text-2xl">Tuition BD</span>
         </Link>
 
-        <p className="text-blue-200 mb-4 capitalize text-sm sm:text-base">Role: {role}</p>
+        <p className="text-blue-200 mb-4 capitalize text-sm sm:text-base">
+          Role: {role}
+        </p>
 
         <nav className="space-y-2">
           {currentMenu.map((item) => (
@@ -229,7 +251,11 @@ const DashboardLayout = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-lg font-medium
                  transition-all duration-300
-                 ${isActive ? "bg-white text-[#0A1F4A] shadow-lg" : "hover:bg-blue-700/40"}`
+                 ${
+                   isActive
+                     ? "bg-white text-[#0A1F4A] shadow-lg"
+                     : "hover:bg-blue-700/40"
+                 }`
               }
             >
               <span className="text-lg">{item.icon}</span>
@@ -249,7 +275,11 @@ const DashboardLayout = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-lg font-medium
                    transition-all duration-300
-                   ${isActive ? "bg-white text-[#0A1F4A] shadow-lg" : "hover:bg-blue-700/40"}`
+                   ${
+                     isActive
+                       ? "bg-white text-[#0A1F4A] shadow-lg"
+                       : "hover:bg-blue-700/40"
+                   }`
                 }
               >
                 <span className="text-lg">{item.icon}</span>

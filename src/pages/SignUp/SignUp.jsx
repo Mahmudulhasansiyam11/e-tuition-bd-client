@@ -183,6 +183,13 @@ const SignUp = () => {
           >
             Login
           </Link>
+           <Link
+            to="/"
+            state={from}
+            className="text-emerald-600 ml-1 font-semibold hover:underline"
+          >
+            Home
+          </Link>
         </p>
       </div>
     </div>
