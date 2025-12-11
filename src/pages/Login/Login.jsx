@@ -2,6 +2,7 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { TbFidgetSpinner } from "react-icons/tb";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 
@@ -9,24 +10,25 @@ const Login = () => {
   const { signIn, signInWithGoogle, loading, user, setLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
   const from = location.state || "/";
 
-  // Loading Screen
+  // React Hook Form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  // Loading screen
   if (loading) return <LoadingSpinner />;
 
   // Redirect if logged in
   if (user) return <Navigate to={from} replace={true} />;
 
-  // HANDLE EMAIL LOGIN
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const email = form.email.value;
-    const password = form.password.value;
-
+  // HANDLE LOGIN
+  const onSubmit = async (data) => {
     try {
-      await signIn(email, password);
+      await signIn(data.email, data.password);
       toast.success("Login Successful");
       navigate(from, { replace: true });
     } catch (err) {
@@ -34,7 +36,7 @@ const Login = () => {
     }
   };
 
-  // HANDLE GOOGLE LOGIN
+  // GOOGLE LOGIN
   const handleGoogle = async () => {
     try {
       await signInWithGoogle();
@@ -49,7 +51,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-lime-50 flex items-center justify-center px-4">
-
       {/* Login Card */}
       <div className="w-full max-w-md bg-white/60 backdrop-blur-2xl border border-white/40 shadow-[0_8px_40px_rgba(0,0,0,0.06)] rounded-3xl py-10 px-8">
 
@@ -67,7 +68,7 @@ const Login = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
           {/* Email */}
           <div>
@@ -76,11 +77,15 @@ const Login = () => {
             </label>
             <input
               type="email"
-              name="email"
-              required
               placeholder="example@mail.com"
+              {...register("email", { required: "Email is required" })}
               className="w-full py-3 px-4 bg-gray-100/70 border border-gray-200 rounded-xl text-gray-700 shadow-sm focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 outline-none transition-all"
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Password */}
@@ -90,11 +95,18 @@ const Login = () => {
             </label>
             <input
               type="password"
-              name="password"
-              required
               placeholder="********"
+              {...register("password", {
+                required: "Password is required",
+                minLength: { value: 6, message: "Minimum 6 characters required" },
+              })}
               className="w-full py-3 px-4 bg-gray-100/70 border border-gray-200 rounded-xl text-gray-700 shadow-sm focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 outline-none transition-all"
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Login Button */}
@@ -136,27 +148,17 @@ const Login = () => {
         {/* Signup Link */}
         <p className="text-center text-gray-600 text-sm mt-6">
           Don’t have an account?{" "}
-          <Link
-            to="/signup"
-            state={from}
-            className="text-emerald-600 font-semibold hover:underline"
-          >
+          <Link to="/signup" state={from} className="text-emerald-600 font-semibold hover:underline">
             Sign up
           </Link>
-           <Link
-            to="/"
-            state={from}
-            className="text-emerald-600 ml-1 font-semibold hover:underline"
-          >
+          <Link to="/" state={from} className="text-emerald-600 ml-1 font-semibold hover:underline">
             Home
           </Link>
         </p>
 
-        
       </div>
     </div>
   );
 };
 
 export default Login;
-
