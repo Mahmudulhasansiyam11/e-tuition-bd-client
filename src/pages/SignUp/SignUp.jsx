@@ -5,6 +5,8 @@ import { toast } from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+// import axios from 'axios';
+import { imageUpload } from "../../utils";
 
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth();
@@ -27,9 +29,20 @@ const SignUp = () => {
 
     // Convert file to image URL
     const imageFile = photo[0];
-    const imageURL = imageFile ? URL.createObjectURL(imageFile) : null;
+    // const imageURL = imageFile ? URL.createObjectURL(imageFile) : null;
+    // const formData = new FormData();
+    // formData.append('image', imageFile);
+    // console.log(formData);
+
+  
 
     try {
+
+        // const {data} = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, formData);
+        // // console.log(data.data.display_url);
+        const imageURL = await imageUpload(imageFile);
+
+
       // 1. Create User
       const result = await createUser(email, password);
 
