@@ -156,7 +156,7 @@ import { RiDashboardFill } from "react-icons/ri";
 import { HiUsers } from "react-icons/hi";
 
 const fakeUser = {
-  role: "admin",
+  role: "student",
   name: "Mahmudul Hasan",
   photo: "https://i.ibb.co/ZJ7C4wJ/default-avatar.png",
 };
