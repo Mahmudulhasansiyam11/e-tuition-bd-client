@@ -15,6 +15,7 @@ const ApplyModal = ({ tuition, closeModal }) => {
       studentEmail: tuition.studentEmail,
       tutorName: user.displayName,
       tutorEmail: user.email,
+      tutorImage: user.photoURL,
       qualifications: form.qualifications.value,
       subject: form.subject.value,
       experience: form.experience.value,
