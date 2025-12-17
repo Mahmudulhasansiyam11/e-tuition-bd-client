@@ -16,6 +16,7 @@ const ApplyModal = ({ tuition, closeModal }) => {
       tutorName: user.displayName,
       tutorEmail: user.email,
       qualifications: form.qualifications.value,
+      subject: form.subject.value,
       experience: form.experience.value,
       expectedSalary: form.salary.value,
       status: "Pending",
