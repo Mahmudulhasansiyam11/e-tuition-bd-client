@@ -143,7 +143,7 @@ const MyTuitions = () => {
     },
   });
 
-  // ❌ DELETE
+  // DELETE
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -166,7 +166,7 @@ const MyTuitions = () => {
     }
   };
 
-  // ✏️ EDIT
+  // EDIT
   const handleEdit = async (tuition) => {
     const { value: formValues } = await Swal.fire({
       title: "Edit Tuition Post",

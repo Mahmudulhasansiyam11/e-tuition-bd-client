@@ -137,6 +137,7 @@ import Statistics from "../pages/Dashboard/Admin/Statistics";
 import Profile from "../pages/Dashboard/Common/Profile";
 
 import { createBrowserRouter } from "react-router";
+import TuitionListingPage from "../pages/Dashboard/Tutor/TuitionListingPage";
 
 export const router = createBrowserRouter([
   // MAIN LAYOUT ROUTES
@@ -224,6 +225,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute requiredRole="tutor">
             <OngoingTuitions />
+          </PrivateRoute>
+        ),
+      },
+       {
+        path: "tuition-listing-page",
+        element: (
+          <PrivateRoute requiredRole="tutor">
+            <TuitionListingPage />
           </PrivateRoute>
         ),
       },

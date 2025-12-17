@@ -156,7 +156,7 @@ import { RiDashboardFill } from "react-icons/ri";
 import { HiUsers } from "react-icons/hi";
 
 const fakeUser = {
-  role: "student",
+  role: "tutor",
   name: "Mahmudul Hasan",
   photo: "https://i.ibb.co/ZJ7C4wJ/default-avatar.png",
 };
@@ -177,6 +177,7 @@ const DashboardLayout = () => {
   ];
 
   const tutorMenu = [
+    { path: "tuition-listing-page", label: "Tuition Listing Page", icon: <FaBook /> },
     {
       path: "my-applications",
       label: "My Applications",
