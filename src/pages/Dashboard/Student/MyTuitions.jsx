@@ -1,65 +1,69 @@
-// import { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+import Swal from "sweetalert2";
 
 const MyTuitions = () => {
-
-  // use useQuery to tuitions data fetch on server
-  const { data: tuitionsData =[], isLoading } = useQuery({
-    queryKey: ['tuitions'],
-    queryFn: async() => {
-      const result = await axios(`${import.meta.env.VITE_API_URL}/tuitions`);
+  const {
+    data: tuitionsData = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["tuitions"],
+    queryFn: async () => {
+      const result = await axios(
+        `${import.meta.env.VITE_API_URL}/tuitions`
+      );
       return result.data;
     },
-  })
+  });
 
-  // Use useState for dynamic/static simulation
-  // const [tuitions, setTuitions] = useState([
-  //   {
-  //     id: 1,
-  //     subject: "Mathematics",
-  //     classLevel: "Grade 10",
-  //     location: "Dhaka",
-  //     budget: "$200",
-  //     status: "Pending",
-  //   },
-  //   {
-  //     id: 2,
-  //     subject: "Physics",
-  //     classLevel: "College",
-  //     location: "Chittagong",
-  //     budget: "$250",
-  //     status: "Approved",
-  //   },
-  //   {
-  //     id: 3,
-  //     subject: "English",
-  //     classLevel: "Grade 8",
-  //     location: "Sylhet",
-  //     budget: "$150",
-  //     status: "Rejected",
-  //   },
-  // ]);
+  // ✅ Handle delete with SweetAlert
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This tuition post will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-  // Handle delete (static simulation)
-  // const handleDelete = (id) => {
-  //   setTuitions((prev) => prev.filter((t) => t.id !== id));
-  //   toast.success("Tuition post deleted (static)");
-  // };
+    if (!result.isConfirmed) return;
 
-  // Handle delete (static simulation)
-  // const handleDelete = (id) => {
-    
-  // };
+    try {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/tuitions/${id}`
+      );
 
-  if(isLoading) return <LoadingSpinner/>
+      if (res.data.deletedCount > 0) {
+        Swal.fire(
+          "Deleted!",
+          "Tuition post has been deleted.",
+          "success"
+        );
+        refetch();
+      }
+    } catch (error) {
+      Swal.fire(
+        "Error!",
+        "Failed to delete tuition post.",
+        "error"
+      );
+      console.error(error);
+    }
+  };
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-[#0A3AFF] mb-6">My Tuitions</h1>
+      <h1 className="text-3xl font-bold text-[#0A3AFF] mb-6">
+        My Tuitions
+      </h1>
 
       <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
         <table className="min-w-full divide-y divide-gray-200">
@@ -74,49 +78,37 @@ const MyTuitions = () => {
               <th className="px-6 py-3 text-center">Actions</th>
             </tr>
           </thead>
+
           <tbody className="divide-y divide-gray-200">
             {tuitionsData.map((t, idx) => (
-              <tr key={t.id} className="hover:bg-blue-50 transition-all">
+              <tr key={t._id} className="hover:bg-blue-50">
                 <td className="px-6 py-4">{idx + 1}</td>
                 <td className="px-6 py-4 font-medium">{t.subject}</td>
                 <td className="px-6 py-4">{t.classLevel}</td>
                 <td className="px-6 py-4">{t.location}</td>
                 <td className="px-6 py-4">${t.budget}</td>
                 <td className="px-6 py-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-white text-sm font-semibold ${
-                      t.status === "Pending"
-                        ? "bg-yellow-500"
-                        : t.status === "Approved"
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                    }`}
-                  >
+                  <span className="px-3 py-1 rounded-full bg-yellow-500 text-white text-sm">
                     {t.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 flex justify-center gap-3">
-                  <button
-                    className="text-blue-600 hover:text-blue-800 transition-all"
-                    onClick={() => toast("Edit clicked (static)")}
-                  >
+                  <button className="text-blue-600">
                     <FaEdit />
                   </button>
                   <button
-                    className="text-red-600 hover:text-red-800 transition-all"
-                    // onClick={() => handleDelete(t.id)}
+                    className="text-red-600"
+                    onClick={() => handleDelete(t._id)}
                   >
                     <FaTrash />
                   </button>
                 </td>
               </tr>
             ))}
+
             {tuitionsData.length === 0 && (
               <tr>
-                <td
-                  colSpan={7}
-                  className="text-center py-6 text-gray-500 font-medium"
-                >
+                <td colSpan={7} className="text-center py-6 text-gray-500">
                   No tuition posts found.
                 </td>
               </tr>
