@@ -19,7 +19,7 @@ const ApplyModal = ({ tuition, closeModal }) => {
       qualifications: form.qualifications.value,
       subject: form.subject.value,
       experience: form.experience.value,
-      expectedSalary: form.salary.value,
+      expectedSalary: Number(form.salary.value),
       status: "Pending",
       appliedAt: new Date(),
     };

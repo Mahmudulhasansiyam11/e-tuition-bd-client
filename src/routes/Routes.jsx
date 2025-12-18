@@ -138,6 +138,7 @@ import Profile from "../pages/Dashboard/Common/Profile";
 
 import { createBrowserRouter } from "react-router";
 import TuitionListingPage from "../pages/Dashboard/Tutor/TuitionListingPage";
+import PaymentSuccess from "../pages/Payment/PaymentSucces";
 
 export const router = createBrowserRouter([
   // MAIN LAYOUT ROUTES
@@ -148,6 +149,12 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
     ],
+  },
+
+  // payment success
+  {
+    path: "/payment-success",
+    element: <PaymentSuccess/>,
   },
 
   // AUTH ROUTES

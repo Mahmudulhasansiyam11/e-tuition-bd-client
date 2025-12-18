@@ -155,11 +155,13 @@ import { MdPostAdd, MdOutlinePayments, MdHome } from "react-icons/md";
 import { RiDashboardFill } from "react-icons/ri";
 import { HiUsers } from "react-icons/hi";
 
+
 const fakeUser = {
   role: "student",
   name: "Mahmudul Hasan",
   photo: "https://i.ibb.co/ZJ7C4wJ/default-avatar.png",
 };
+
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
