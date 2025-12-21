@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 import useAuth from "../../../hooks/useAuth";
-import axios from "axios";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 
 const OngoingTuitions = () => {
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const {
     data: ongoingTuitionsData = [],
@@ -14,8 +15,8 @@ const OngoingTuitions = () => {
     queryKey: ["ongoingTuitions", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const result = await axios.get(
-        `${import.meta.env.VITE_API_URL}/my-ongoing-tuitions/${user?.email}`
+      const result = await axiosSecure(
+        `/my-ongoing-tuitions`
       );
       return result.data;
     },
