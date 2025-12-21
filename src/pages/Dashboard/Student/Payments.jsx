@@ -1,22 +1,26 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import useAuth from "../../../hooks/useAuth";
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+
 const Payments = () => {
-  const payments = [
-    {
-      id: 1,
-      tutorName: "Rina Akter",
-      tuitionTitle: "Math Grade 10",
-      amount: "$200",
-      date: "2025-12-10",
-      status: "Paid",
-    },
-    {
-      id: 2,
-      tutorName: "Mahmudul Hasan",
-      tuitionTitle: "Physics College",
-      amount: "$250",
-      date: "2025-12-09",
-      status: "Paid",
-    },
-  ];
+
+  const {user} = useAuth();
+
+   const {
+      data: ordersData = [],
+      isLoading,
+    } = useQuery({
+      queryKey: ["orders", user?.email],
+      queryFn: async () => {
+        const result = await axios(
+          `${import.meta.env.VITE_API_URL}/my-orders/${user?.email}`
+        );
+        return result.data;
+      },
+    });
+  
+  if(isLoading) return <LoadingSpinner/>
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -27,21 +31,22 @@ const Payments = () => {
           <thead className="bg-[#0A1F4A] text-white">
             <tr>
               <th className="px-6 py-3">#</th>
-              <th className="px-6 py-3">Tutor</th>
-              <th className="px-6 py-3">Tuition</th>
+              <th className="px-6 py-3">Student Name</th>
+              <th className="px-6 py-3">Student Email
+              </th>
               <th className="px-6 py-3">Amount</th>
               <th className="px-6 py-3">Date</th>
               <th className="px-6 py-3">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {payments.map((p, idx) => (
+            {ordersData.map((p, idx) => (
               <tr key={p.id} className="hover:bg-blue-50">
                 <td className="px-6 py-4">{idx + 1}</td>
-                <td className="px-6 py-4 font-medium">{p.tutorName}</td>
-                <td className="px-6 py-4">{p.tuitionTitle}</td>
-                <td className="px-6 py-4">{p.amount}</td>
-                <td className="px-6 py-4">{p.date}</td>
+                <td className="px-6 py-4 font-medium">{p.userName}</td>
+                <td className="px-6 py-4">{p.userEmail}</td>
+                <td className="px-6 py-4">${p.amount}</td>
+                <td className="px-6 py-4">{p.paidAt}</td>
                 <td className="px-6 py-4">
                   <span className="px-2 py-1 rounded-full text-white bg-green-500">
                     {p.status}
