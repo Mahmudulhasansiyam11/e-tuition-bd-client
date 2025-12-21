@@ -16,7 +16,7 @@ const Statistics = () => {
     },
   });
 
-  // fetch user data
+  // fetch users data
   const {
     data: usersData = [],
   } = useQuery({
@@ -29,6 +29,18 @@ const Statistics = () => {
     },
   });
 
+  // fetch tuitions data
+  const {
+    data: tuitionsData = [],
+  } = useQuery({
+    queryKey: ["tuitionsData"],
+    queryFn: async () => {
+      const result = await axios(
+        `${import.meta.env.VITE_API_URL}/tuitions`
+      );
+      return result.data;
+    },
+  });
 
   if (isLoading) return <LoadingSpinner />;
   if (isRoleLoading) return <LoadingSpinner />;
@@ -36,7 +48,7 @@ const Statistics = () => {
   // Static financial & platform data
   const totalEarnings = "$12,450";
   const totalUsers = usersData.length;
-  const totalTuitions = 320;
+  const totalTuitions = tuitionsData.length;
 
   return (
     <div>
