@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
+import axios from "axios";
 
 const Login = () => {
   const { signIn, signInWithGoogle, loading, user, setLoading } = useAuth();
@@ -28,7 +29,12 @@ const Login = () => {
   // HANDLE LOGIN
   const onSubmit = async (data) => {
     try {
-      await signIn(data.email, data.password);
+      const result = await signIn(data.email, data.password);
+      await axios.put(`${import.meta.env.VITE_API_URL}/users`, {
+        email: result?.user?.email,
+        name: result?.user?.displayName,
+        image: result?.user?.photoURL,
+      });
       toast.success("Login Successful");
       navigate(from, { replace: true });
     } catch (err) {
@@ -39,7 +45,17 @@ const Login = () => {
   // GOOGLE LOGIN
   const handleGoogle = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      // SAVE GOOGLE USER TO DB (Default Role: Student)
+      const userData = {
+        name: result?.user?.displayName,
+        email: result?.user?.email,
+        role: "Student", // Default role for Google Login
+        image: result?.user?.photoURL,
+        status: "Verified",
+      };
+      await axios.put(`${import.meta.env.VITE_API_URL}/users`, userData);
+      // await signInWithGoogle();
       toast.success("Login Successful");
       navigate(from, { replace: true });
     } catch (err) {
@@ -53,7 +69,6 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-lime-50 flex items-center justify-center px-4">
       {/* Login Card */}
       <div className="w-full max-w-md bg-white/60 backdrop-blur-2xl border border-white/40 shadow-[0_8px_40px_rgba(0,0,0,0.06)] rounded-3xl py-10 px-8">
-
         {/* Branding */}
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-lime-400 rounded-2xl mx-auto flex items-center justify-center shadow-lg">
@@ -69,7 +84,6 @@ const Login = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-
           {/* Email */}
           <div>
             <label className="block mb-1 text-gray-700 font-medium text-sm">
@@ -98,7 +112,10 @@ const Login = () => {
               placeholder="********"
               {...register("password", {
                 required: "Password is required",
-                minLength: { value: 6, message: "Minimum 6 characters required" },
+                minLength: {
+                  value: 6,
+                  message: "Minimum 6 characters required",
+                },
               })}
               className="w-full py-3 px-4 bg-gray-100/70 border border-gray-200 rounded-xl text-gray-700 shadow-sm focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 outline-none transition-all"
             />
@@ -115,7 +132,10 @@ const Login = () => {
             className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-lime-500 text-white font-semibold text-lg shadow-md hover:shadow-xl transition-all duration-300 hover:opacity-95"
           >
             {loading ? (
-              <TbFidgetSpinner className="animate-spin mx-auto text-white" size={26} />
+              <TbFidgetSpinner
+                className="animate-spin mx-auto text-white"
+                size={26}
+              />
             ) : (
               "Login"
             )}
@@ -142,20 +162,29 @@ const Login = () => {
           className="flex items-center justify-center cursor-pointer gap-3 py-3 border border-gray-300 hover:bg-gray-100 rounded-xl transition-all"
         >
           <FcGoogle size={26} />
-          <span className="text-gray-700 font-medium">Continue with Google</span>
+          <span className="text-gray-700 font-medium">
+            Continue with Google
+          </span>
         </div>
 
         {/* Signup Link */}
         <p className="text-center text-gray-600 text-sm mt-6">
           Don’t have an account?{" "}
-          <Link to="/signup" state={from} className="text-emerald-600 font-semibold hover:underline">
+          <Link
+            to="/signup"
+            state={from}
+            className="text-emerald-600 font-semibold hover:underline"
+          >
             Sign up
           </Link>
-          <Link to="/" state={from} className="text-emerald-600 ml-1 font-semibold hover:underline">
+          <Link
+            to="/"
+            state={from}
+            className="text-emerald-600 ml-1 font-semibold hover:underline"
+          >
             Home
           </Link>
         </p>
-
       </div>
     </div>
   );
