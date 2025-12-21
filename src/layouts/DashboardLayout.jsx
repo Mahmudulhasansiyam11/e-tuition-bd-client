@@ -157,7 +157,7 @@ import { HiUsers } from "react-icons/hi";
 
 
 const fakeUser = {
-  role: "student",
+  role: "tutor",
   name: "Mahmudul Hasan",
   photo: "https://i.ibb.co/ZJ7C4wJ/default-avatar.png",
 };
