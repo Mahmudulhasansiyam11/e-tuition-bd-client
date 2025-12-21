@@ -38,7 +38,7 @@ const Statistics = () => {
   const { data: ordersData = [] } = useQuery({
     queryKey: ["ordersData"],
     queryFn: async () => {
-      const result = await axios(`${import.meta.env.VITE_API_URL}/my-orders`);
+      const result = await axios(`${import.meta.env.VITE_API_URL}/my-orders1`);
       return result.data;
     },
   });

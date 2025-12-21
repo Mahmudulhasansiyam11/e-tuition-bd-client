@@ -14,10 +14,9 @@ import useRole from "../hooks/useRole";
 import useAuth from "../hooks/useAuth";
 import LoadingSpinner from "../components/Shared/LoadingSpinner";
 
-
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [ role, isRoleLoading ] = useRole();
+  const [role, isRoleLoading] = useRole();
   const { user } = useAuth();
 
   const studentMenu = [
@@ -32,7 +31,11 @@ const DashboardLayout = () => {
   ];
 
   const tutorMenu = [
-    { path: "tuition-listing-page", label: "Tuition Listing Page", icon: <FaBook /> },
+    {
+      path: "tuition-listing-page",
+      label: "Tuition Listing Page",
+      icon: <FaBook />,
+    },
     {
       path: "my-applications",
       label: "My Applications",
@@ -66,7 +69,7 @@ const DashboardLayout = () => {
     if (window.innerWidth < 1024) setSidebarOpen(false);
   };
 
-  if(isRoleLoading) return <LoadingSpinner/>
+  if (isRoleLoading) return <LoadingSpinner />;
 
   return (
     <div className="flex min-h-screen bg-gray-100 relative">

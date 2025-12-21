@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+// import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const Payments = () => {
 
   const {user} = useAuth();
+  const axiosSecure = useAxiosSecure();
 
    const {
       data: ordersData = [],
@@ -13,8 +15,8 @@ const Payments = () => {
     } = useQuery({
       queryKey: ["orders", user?.email],
       queryFn: async () => {
-        const result = await axios(
-          `${import.meta.env.VITE_API_URL}/my-orders/${user?.email}`
+        const result = await axiosSecure(
+          `/my-orders`
         );
         return result.data;
       },
