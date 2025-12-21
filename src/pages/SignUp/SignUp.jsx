@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 // import axios from 'axios';
 import { imageUpload } from "../../utils";
+import axios from "axios";
 
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth();
@@ -44,23 +45,36 @@ const SignUp = () => {
 
 
       // 1. Create User
-      const result = await createUser(email, password);
+       await createUser(email, password);
 
       // 2. Update Profile
       await updateUserProfile(name, imageURL);
 
-      // 3. Save User Data to Your DB Later (optional)
-      console.log({
-        uid: result.user.uid,
+      // 3. Save User Data to Your DB
+      // console.log({
+      //   uid: result.user.uid,
+      //   name,
+      //   role,
+      //   phone,
+      //   email,
+      //   photo: imageURL,
+      // });
+
+      // 3. SAVE USER DATA TO MONGODB
+      const userData = {
         name,
-        role,
-        phone,
         email,
-        photo: imageURL,
-      });
+        role, // Using the role selected in the form
+        phone,
+        image: imageURL,
+        status: "Verified"
+      };
+
+      await axios.put(`${import.meta.env.VITE_API_URL}/users`, userData);
 
       toast.success("Signup Successful!");
       navigate(from, { replace: true });
+
     } catch (err) {
       toast.error(err?.message);
     }
@@ -69,7 +83,17 @@ const SignUp = () => {
   // Google Sign-in
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      // SAVE GOOGLE USER TO DB (Default Role: Student)
+      const userData = {
+        name: result?.user?.displayName,
+        email: result?.user?.email,
+        role: "Student", // Default role for Google Login
+        image: result?.user?.photoURL,
+        status: "Verified"
+      };
+      await axios.put(`${import.meta.env.VITE_API_URL}/users`, userData);
+
       toast.success("Signup Successful");
       navigate(from, { replace: true });
     } catch (err) {
