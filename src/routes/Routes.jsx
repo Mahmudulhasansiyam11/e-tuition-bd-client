@@ -142,6 +142,10 @@ import PaymentSuccess from "../pages/Payment/PaymentSucces";
 import TutorRoute from "./TutorRoute";
 import AdminRoute from "./AdminRoute";
 import StudentRoute from "./StudentRoute";
+import AllTuitions from "../components/AllTuitions/AllTuitions";
+import Tutors from "../components/Tutors/Tutors";
+import About from "../components/About/About";
+import Contact from "../components/Contact/Contact";
 
 export const router = createBrowserRouter([
   // MAIN LAYOUT ROUTES
@@ -151,6 +155,18 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "/", element: <Home /> },
+      {
+        path: "/all-tuitions", element: <AllTuitions></AllTuitions>
+      },
+      {
+        path: "/tutors", element: <Tutors></Tutors>
+      },
+      {
+        path: "/about", element: <About></About>
+      },
+      {
+        path: "/contact", element: <Contact></Contact>
+      }
     ],
   },
 
