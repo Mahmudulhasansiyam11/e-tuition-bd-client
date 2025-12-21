@@ -17,36 +17,46 @@ const Statistics = () => {
   });
 
   // fetch users data
-  const {
-    data: usersData = [],
-  } = useQuery({
+  const { data: usersData = [] } = useQuery({
     queryKey: ["usersData"],
     queryFn: async () => {
-      const result = await axios(
-        `${import.meta.env.VITE_API_URL}/users`
-      );
+      const result = await axios(`${import.meta.env.VITE_API_URL}/users`);
       return result.data;
     },
   });
 
   // fetch tuitions data
-  const {
-    data: tuitionsData = [],
-  } = useQuery({
+  const { data: tuitionsData = [] } = useQuery({
     queryKey: ["tuitionsData"],
     queryFn: async () => {
-      const result = await axios(
-        `${import.meta.env.VITE_API_URL}/tuitions`
-      );
+      const result = await axios(`${import.meta.env.VITE_API_URL}/tuitions`);
       return result.data;
     },
   });
+
+  // fetch orders data
+  const { data: ordersData = [] } = useQuery({
+    queryKey: ["ordersData"],
+    queryFn: async () => {
+      const result = await axios(`${import.meta.env.VITE_API_URL}/my-orders`);
+      return result.data;
+    },
+  });
+
+  // 1. FILTER: Get only "Paid" orders
+  const paidOrders = ordersData.filter((order) => order.status === "Paid");
+
+  // 2. ADDITION: Calculate the total sum of the 'amount' property
+  const totalSpent = paidOrders.reduce(
+    (sum, order) => sum + (order.amount || 0),
+    0
+  );
 
   if (isLoading) return <LoadingSpinner />;
   if (isRoleLoading) return <LoadingSpinner />;
 
   // Static financial & platform data
-  const totalEarnings = "$12,450";
+  const totalEarnings = totalSpent;
   const totalUsers = usersData.length;
   const totalTuitions = tuitionsData.length;
 
@@ -66,7 +76,9 @@ const Statistics = () => {
               <FaDollarSign size={36} className="text-[#0B5FFF]" />
               <div>
                 <p className="text-sm sm:text-base">Total Earnings</p>
-                <p className="text-xl sm:text-2xl font-bold">{totalEarnings}</p>
+                <p className="text-xl sm:text-2xl font-bold">
+                  ${totalEarnings}
+                </p>
               </div>
             </div>
             <div className="bg-[#0A1F4A] text-white rounded-xl shadow-lg p-6 flex items-center gap-4 hover:shadow-xl transition">
