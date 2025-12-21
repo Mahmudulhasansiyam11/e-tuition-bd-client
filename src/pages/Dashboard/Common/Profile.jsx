@@ -2,9 +2,11 @@
 import useAuth from '../../../hooks/useAuth';
 import coverImg from '../../../assets/images/cover1.jpg';
 import { FaEnvelope, FaIdBadge } from 'react-icons/fa';
+import useRole from '../../../hooks/useRole';
 
 const Profile = () => {
   const { user } = useAuth();
+  const [role, isRoleLoading] = useRole();
 
   return (
     <div className="min-h-screen bg-[#E5F1FF] flex justify-center items-start py-12 px-4">
@@ -35,9 +37,9 @@ const Profile = () => {
           </div>
 
           {/* Name and Role */}
-          <h2 className="mt-4 text-2xl font-bold text-[#0A3AFF]">{user?.displayName || 'John Doe'}</h2>
+          {/* <h2 className="mt-4 text-2xl font-bold text-[#0A3AFF]">{user?.displayName || 'John Doe'}</h2> */}
           <span className="mt-2 inline-block px-4 py-1 rounded-full text-sm font-semibold bg-[#0A1F4A] text-white shadow-md">
-            {user?.role || 'Student'}
+            {role}
           </span>
 
           {/* User Info */}
