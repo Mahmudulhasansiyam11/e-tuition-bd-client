@@ -1,20 +1,32 @@
+import { useQuery } from "@tanstack/react-query";
+import useAuth from "../../../hooks/useAuth";
+import axios from "axios";
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+
 const RevenueHistory = () => {
-  const transactions = [
-    {
-      id: 1,
-      tuitionTitle: "Math Tuition for Grade 10",
-      amount: "$200",
-      date: "2025-12-10",
-      status: "Paid",
+
+  const { user } = useAuth();
+
+  const {
+    data: ongoingTuitionsData = [],
+    isLoading,
+  } = useQuery({
+    queryKey: ["ongoingTuitions", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const result = await axios.get(
+        `${import.meta.env.VITE_API_URL}/my-ongoing-tuitions/${user?.email}`
+      );
+      return result.data;
     },
-    {
-      id: 2,
-      tuitionTitle: "Physics Tuition for College",
-      amount: "$250",
-      date: "2025-12-09",
-      status: "Paid",
-    },
-  ];
+  });
+
+  const revenueHistory = ongoingTuitionsData.filter(
+    (item) => item.status === "Approved" || item.status === "Paid"
+  );
+
+  if (isLoading) return <LoadingSpinner />;
+ 
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -32,19 +44,19 @@ const RevenueHistory = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {transactions.map((tx, index) => (
+            {revenueHistory.map((tx, index) => (
               <tr key={tx.id} className="hover:bg-blue-50">
                 <td className="px-6 py-4">{index + 1}</td>
-                <td className="px-6 py-4 font-medium">{tx.tuitionTitle}</td>
-                <td className="px-6 py-4">{tx.amount}</td>
-                <td className="px-6 py-4">{tx.date}</td>
+                <td className="px-6 py-4 font-medium">{tx.subject}</td>
+                <td className="px-6 py-4">${tx.expectedSalary}</td>
+                <td className="px-6 py-4">{tx.appliedAt}</td>
                 <td className="px-6 py-4">
                   <span
                     className={`px-2 py-1 rounded-full text-white text-sm ${
-                      tx.status === "Paid" ? "bg-green-500" : "bg-yellow-500"
+                      tx.status === "Approved" ? "bg-green-500" : "bg-yellow-500"
                     }`}
                   >
-                    {tx.status}
+                    paid
                   </span>
                 </td>
               </tr>
