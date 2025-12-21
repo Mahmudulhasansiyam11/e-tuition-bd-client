@@ -3,10 +3,13 @@ import useAuth from '../../../hooks/useAuth';
 import coverImg from '../../../assets/images/cover1.jpg';
 import { FaEnvelope, FaIdBadge } from 'react-icons/fa';
 import useRole from '../../../hooks/useRole';
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 
 const Profile = () => {
   const { user } = useAuth();
   const [role, isRoleLoading] = useRole();
+
+  if(isRoleLoading) return <LoadingSpinner/>
 
   return (
     <div className="min-h-screen bg-[#E5F1FF] flex justify-center items-start py-12 px-4">
