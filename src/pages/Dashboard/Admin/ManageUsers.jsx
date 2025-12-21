@@ -4,15 +4,17 @@ import { toast } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const ManageUsers = () => {
   const [editingUser, setEditingUser] = useState(null);
+  const axiosSecure = useAxiosSecure();
 
   // 1. FETCH USERS
   const { data: usersData = [], isLoading, refetch } = useQuery({
     queryKey: ["usersData"],
     queryFn: async () => {
-      const result = await axios.get(`${import.meta.env.VITE_API_URL}/users`);
+      const result = await axiosSecure(`/users`);
       return result.data;
     },
   });
