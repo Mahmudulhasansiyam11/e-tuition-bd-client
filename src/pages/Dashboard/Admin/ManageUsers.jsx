@@ -1,123 +1,97 @@
 import { useState } from "react";
 import { FaUserEdit, FaTrash } from "react-icons/fa";
-import { RiAdminFill } from "react-icons/ri";
 import { toast } from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "Mahmudul Hasan",
-      email: "mahmudul@example.com",
-      role: "Student",
-      status: "Active",
-      photo: "https://i.ibb.co/ZJ7C4wJ/default-avatar.png",
-      verified: true,
-    },
-    {
-      id: 2,
-      name: "Rina Akter",
-      email: "rina@example.com",
-      role: "Tutor",
-      status: "Inactive",
-      photo: "https://i.ibb.co/ZJ7C4wJ/default-avatar.png",
-      verified: false,
-    },
-    {
-      id: 3,
-      name: "Admin User",
-      email: "admin@example.com",
-      role: "Admin",
-      status: "Active",
-      photo: "https://i.ibb.co/ZJ7C4wJ/default-avatar.png",
-      verified: true,
-    },
-  ]);
-
   const [editingUser, setEditingUser] = useState(null);
 
-  const handleDelete = (id) => {
-    toast.success("User Deleted (static)");
-    setUsers(users.filter((user) => user.id !== id));
+  // 1. FETCH USERS
+  const { data: usersData = [], isLoading, refetch } = useQuery({
+    queryKey: ["usersData"],
+    queryFn: async () => {
+      const result = await axios.get(`${import.meta.env.VITE_API_URL}/users`);
+      return result.data;
+    },
+  });
+
+  // 2. DELETE USER
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this account?")) {
+      try {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/users/${id}`);
+        toast.success("User deleted successfully");
+        refetch(); // Refresh the list
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to delete user");
+      }
+    }
   };
 
-  const handleUpdate = (e) => {
+  // 3. UPDATE USER
+  const handleUpdate = async (e) => {
     e.preventDefault();
     const form = e.target;
-    const updatedUser = {
-      ...editingUser,
+    const updatedInfo = {
       name: form.name.value,
       email: form.email.value,
       role: form.role.value,
       status: form.status.value,
       verified: form.verified.checked,
     };
-    setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
-    toast.success("User Updated (static)");
-    setEditingUser(null);
+
+    try {
+      await axios.patch(`${import.meta.env.VITE_API_URL}/users/${editingUser._id}`, updatedInfo);
+      toast.success("User updated successfully");
+      setEditingUser(null);
+      refetch();
+    } catch (err) {
+      console.log(err);
+      toast.error("Update failed");
+    }
   };
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-[#0A3AFF] mb-6">User Management</h1>
 
-      {/* USERS TABLE */}
       <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-[#0A1F4A] text-white">
+          <thead className="bg-[#0A1F4A] text-white text-left">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold">#</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Profile</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Email</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Role</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Status</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Verified</th>
+              <th className="px-6 py-3 text-sm font-semibold">Profile</th>
+              <th className="px-6 py-3 text-sm font-semibold">Email</th>
+              <th className="px-6 py-3 text-sm font-semibold">Role</th>
+              <th className="px-6 py-3 text-sm font-semibold">Status</th>
               <th className="px-6 py-3 text-center text-sm font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {users.map((user, index) => (
-              <tr key={user.id} className="hover:bg-blue-50">
-                <td className="px-6 py-4">{index + 1}</td>
+            {usersData.map((user) => (
+              <tr key={user._id} className="hover:bg-blue-50">
                 <td className="px-6 py-4 flex items-center gap-3">
-                  <img
-                    src={user.photo}
-                    alt={user.name}
-                    className="w-10 h-10 rounded-full border"
-                  />
-                  {user.name}
+                  <img src={user.image} alt="" className="w-10 h-10 rounded-full border object-cover" />
+                  <span className="font-medium text-gray-800">{user.name}</span>
                 </td>
-                <td className="px-6 py-4">{user.email}</td>
-                <td className="px-6 py-4">{user.role}</td>
+                <td className="px-6 py-4 text-gray-600">{user.email}</td>
                 <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-white text-sm ${
-                      user.status === "Active" ? "bg-green-500" : "bg-red-500"
-                    }`}
-                  >
-                    {user.status}
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${user.role === 'Admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
+                    {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  {user.verified ? (
-                    <span className="text-green-600 font-semibold">Yes</span>
-                  ) : (
-                    <span className="text-red-600 font-semibold">No</span>
-                  )}
+                  <span className={`px-2 py-1 rounded text-xs font-bold ${user.status === "Verified" || user.verified ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                    {user.verified ? "Verified" : (user.status || "Pending")}
+                  </span>
                 </td>
-                <td className="px-6 py-4 flex justify-center gap-3">
-                  <button
-                    className="text-blue-600 hover:text-blue-800"
-                    onClick={() => setEditingUser(user)}
-                  >
-                    <FaUserEdit />
-                  </button>
-                  <button
-                    className="text-red-600 hover:text-red-800"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    <FaTrash />
-                  </button>
+                <td className="px-6 py-4 flex justify-center gap-4">
+                  <button onClick={() => setEditingUser(user)} className="text-blue-600 hover:scale-110 transition"><FaUserEdit size={18} /></button>
+                  <button onClick={() => handleDelete(user._id)} className="text-red-600 hover:scale-110 transition"><FaTrash size={18} /></button>
                 </td>
               </tr>
             ))}
@@ -125,78 +99,45 @@ const ManageUsers = () => {
         </table>
       </div>
 
-      {/* EDIT MODAL */}
+      {/* MODAL */}
       {editingUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-lg">
-            <h2 className="text-2xl font-semibold text-[#0A3AFF] mb-4">Edit User</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Update User Account</h2>
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  defaultValue={editingUser.name}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0B5FFF] outline-none"
-                  required
-                />
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
+                <input type="text" name="name" defaultValue={editingUser.name} className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  defaultValue={editingUser.email}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0B5FFF] outline-none"
-                  required
-                />
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+                <input type="email" name="email" defaultValue={editingUser.email} className="w-full px-4 py-2 border rounded-xl bg-gray-50" required />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Role</label>
-                <select
-                  name="role"
-                  defaultValue={editingUser.role}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0B5FFF] outline-none"
-                >
-                  <option value="Student">Student</option>
-                  <option value="Tutor">Tutor</option>
-                  <option value="Admin">Admin</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Role</label>
+                  <select name="role" defaultValue={editingUser.role} className="w-full px-4 py-2 border rounded-xl outline-none">
+                    <option value="Student">Student</option>
+                    <option value="Tutor">Tutor</option>
+                    <option value="Admin">Admin</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Account Status</label>
+                  <select name="status" defaultValue={editingUser.status} className="w-full px-4 py-2 border rounded-xl outline-none">
+                    <option value="Verified">Verified</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Blocked">Blocked</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Status</label>
-                <select
-                  name="status"
-                  defaultValue={editingUser.status}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0B5FFF] outline-none"
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
+              <div className="flex items-center gap-2 py-2">
+                <input type="checkbox" name="verified" defaultChecked={editingUser.verified} id="v" className="w-5 h-5 accent-blue-600" />
+                <label htmlFor="v" className="text-gray-700 font-medium cursor-pointer">Verify User Manually</label>
               </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="verified"
-                  defaultChecked={editingUser.verified}
-                  className="w-4 h-4 accent-[#0A3AFF]"
-                />
-                <label className="text-gray-700 text-sm">Verified</label>
-              </div>
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setEditingUser(null)}
-                  className="px-4 py-2 rounded-lg border hover:bg-gray-100 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-lg bg-[#0A3AFF] text-white hover:bg-[#0B5FFF] transition"
-                >
-                  Update
-                </button>
+              <div className="flex justify-end gap-3 pt-4">
+                <button type="button" onClick={() => setEditingUser(null)} className="px-6 py-2 rounded-xl border font-semibold">Cancel</button>
+                <button type="submit" className="px-6 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Save Changes</button>
               </div>
             </form>
           </div>
