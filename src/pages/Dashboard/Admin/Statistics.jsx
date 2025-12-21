@@ -16,12 +16,26 @@ const Statistics = () => {
     },
   });
 
+  // fetch user data
+  const {
+    data: usersData = [],
+  } = useQuery({
+    queryKey: ["usersData"],
+    queryFn: async () => {
+      const result = await axios(
+        `${import.meta.env.VITE_API_URL}/users`
+      );
+      return result.data;
+    },
+  });
+
+
   if (isLoading) return <LoadingSpinner />;
   if (isRoleLoading) return <LoadingSpinner />;
 
   // Static financial & platform data
   const totalEarnings = "$12,450";
-  const totalUsers = 1250;
+  const totalUsers = usersData.length;
   const totalTuitions = 320;
 
   return (
