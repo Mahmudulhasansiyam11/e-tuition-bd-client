@@ -139,6 +139,9 @@ import Profile from "../pages/Dashboard/Common/Profile";
 import { createBrowserRouter } from "react-router";
 import TuitionListingPage from "../pages/Dashboard/Tutor/TuitionListingPage";
 import PaymentSuccess from "../pages/Payment/PaymentSucces";
+import TutorRoute from "./TutorRoute";
+import AdminRoute from "./AdminRoute";
+import StudentRoute from "./StudentRoute";
 
 export const router = createBrowserRouter([
   // MAIN LAYOUT ROUTES
@@ -187,7 +190,9 @@ export const router = createBrowserRouter([
         path: "my-tuitions",
         element: (
           <PrivateRoute requiredRole="student">
-            <MyTuitions />
+            <StudentRoute>
+              <MyTuitions />
+            </StudentRoute>
           </PrivateRoute>
         ),
       },
@@ -195,7 +200,9 @@ export const router = createBrowserRouter([
         path: "post-tuition",
         element: (
           <PrivateRoute requiredRole="student">
-            <PostTuition />
+            <StudentRoute>
+              <PostTuition />
+            </StudentRoute>
           </PrivateRoute>
         ),
       },
@@ -203,7 +210,9 @@ export const router = createBrowserRouter([
         path: "applied-tutors",
         element: (
           <PrivateRoute requiredRole="student">
-            <AppliedTutors />
+           <StudentRoute>
+             <AppliedTutors />
+           </StudentRoute>
           </PrivateRoute>
         ),
       },
@@ -211,7 +220,9 @@ export const router = createBrowserRouter([
         path: "payments",
         element: (
           <PrivateRoute requiredRole="student">
-            <Payments />
+            <StudentRoute>
+              <Payments />
+            </StudentRoute>
           </PrivateRoute>
         ),
       },
@@ -223,7 +234,9 @@ export const router = createBrowserRouter([
         path: "my-applications",
         element: (
           <PrivateRoute requiredRole="tutor">
-            <MyApplications />
+            <TutorRoute>
+              <MyApplications />
+            </TutorRoute>
           </PrivateRoute>
         ),
       },
@@ -231,7 +244,9 @@ export const router = createBrowserRouter([
         path: "ongoing-tuitions",
         element: (
           <PrivateRoute requiredRole="tutor">
-            <OngoingTuitions />
+           <TutorRoute>
+             <OngoingTuitions />
+           </TutorRoute>
           </PrivateRoute>
         ),
       },
@@ -239,7 +254,9 @@ export const router = createBrowserRouter([
         path: "tuition-listing-page",
         element: (
           <PrivateRoute requiredRole="tutor">
-            <TuitionListingPage />
+            <TutorRoute>
+              <TuitionListingPage />
+            </TutorRoute>
           </PrivateRoute>
         ),
       },
@@ -247,7 +264,9 @@ export const router = createBrowserRouter([
         path: "revenue-history",
         element: (
           <PrivateRoute requiredRole="tutor">
-            <RevenueHistory />
+            <TutorRoute>
+              <RevenueHistory />
+            </TutorRoute>
           </PrivateRoute>
         ),
       },
@@ -259,7 +278,9 @@ export const router = createBrowserRouter([
         path: "manage-users",
         element: (
           <PrivateRoute requiredRole="admin">
-            <ManageUsers />
+            <AdminRoute>
+              <ManageUsers />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },
@@ -267,7 +288,9 @@ export const router = createBrowserRouter([
         path: "manage-tuitions",
         element: (
           <PrivateRoute requiredRole="admin">
-            <ManageTuitions />
+            <AdminRoute>
+              <ManageTuitions />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },
@@ -275,7 +298,9 @@ export const router = createBrowserRouter([
         path: "statistics",
         element: (
           <PrivateRoute requiredRole="admin">
-            <Statistics />
+            <AdminRoute>
+              <Statistics />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },
