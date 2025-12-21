@@ -1,37 +1,28 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { FaDollarSign, FaUsers, FaBook } from "react-icons/fa";
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 
 const Statistics = () => {
+
+  const { data: transactionsData = [], isLoading } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: async () => {
+      const result = await axios(
+        `${import.meta.env.VITE_API_URL}/transaction-history`
+      );
+      return result.data;
+    },
+  });
+
+  if (isLoading) return <LoadingSpinner />;
+
   // Static financial & platform data
   const totalEarnings = "$12,450";
   const totalUsers = 1250;
   const totalTuitions = 320;
 
-  const transactions = [
-    {
-      id: 1,
-      studentName: "Rina Akter",
-      tuitionSubject: "Mathematics",
-      amount: "$200",
-      date: "2025-12-01",
-      status: "Successful",
-    },
-    {
-      id: 2,
-      studentName: "Mahmudul Hasan",
-      tuitionSubject: "Physics",
-      amount: "$250",
-      date: "2025-12-02",
-      status: "Successful",
-    },
-    {
-      id: 3,
-      studentName: "Karim Ahmed",
-      tuitionSubject: "Chemistry",
-      amount: "$180",
-      date: "2025-12-03",
-      status: "Successful",
-    },
-  ];
+ 
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -77,25 +68,29 @@ const Statistics = () => {
           <thead className="bg-[#0A1F4A] text-white">
             <tr>
               <th className="px-3 sm:px-6 py-2 text-left">#</th>
-              <th className="px-3 sm:px-6 py-2 text-left">Student Name</th>
-              <th className="px-3 sm:px-6 py-2 text-left">Tuition Subject</th>
+              <th className="px-3 sm:px-6 py-2 text-left">Name</th>
+              <th className="px-3 sm:px-6 py-2 text-left">Email</th>
               <th className="px-3 sm:px-6 py-2 text-left">Amount</th>
               <th className="px-3 sm:px-6 py-2 text-left">Date</th>
               <th className="px-3 sm:px-6 py-2 text-left">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {transactions.map((txn, idx) => (
+            {transactionsData.map((txn, idx) => (
               <tr key={txn.id} className="hover:bg-blue-50">
                 <td className="px-3 sm:px-6 py-2">{idx + 1}</td>
-                <td className="px-3 sm:px-6 py-2 font-medium">{txn.studentName}</td>
-                <td className="px-3 sm:px-6 py-2">{txn.tuitionSubject}</td>
-                <td className="px-3 sm:px-6 py-2">{txn.amount}</td>
-                <td className="px-3 sm:px-6 py-2">{txn.date}</td>
+                <td className="px-3 sm:px-6 py-2 font-medium">
+                  {txn.userName}
+                </td>
+                <td className="px-3 sm:px-6 py-2">{txn.userEmail}</td>
+                <td className="px-3 sm:px-6 py-2">${txn.amount}</td>
+                <td className="px-3 sm:px-6 py-2">{txn.paidAt}</td>
                 <td className="px-3 sm:px-6 py-2">
                   <span
                     className={`px-2 py-1 rounded-full text-white text-xs sm:text-sm ${
-                      txn.status === "Successful" ? "bg-green-500" : "bg-red-500"
+                      txn.status === "Successful"
+                        ? "bg-green-500"
+                        : "bg-red-500"
                     }`}
                   >
                     {txn.status}
@@ -103,7 +98,7 @@ const Statistics = () => {
                 </td>
               </tr>
             ))}
-            {transactions.length === 0 && (
+            {transactionsData.length === 0 && (
               <tr>
                 <td colSpan={6} className="text-center py-4 text-gray-500">
                   No transactions found.
