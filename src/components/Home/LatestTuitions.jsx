@@ -1,45 +1,77 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import Container from "../Shared/Container";
 import { Link } from "react-router";
-
-// Static Tuotions Placeholder
-const sampleTuitions = [
-  { id: 1, subject: "Mathematics", class: "Class 8", location: "Dhanmondi", salary: "6,000 BDT" },
-  { id: 2, subject: "Physics", class: "Class 10", location: "Uttara", salary: "7,500 BDT" },
-  { id: 3, subject: "English", class: "Class 7", location: "Mirpur", salary: "5,500 BDT" },
-];
+import LoadingSpinner from "../Shared/LoadingSpinner";
+import { FiMapPin, FiArrowRight } from "react-icons/fi";
 
 const LatestTuitions = () => {
-  return (
-    <section className="py-16">
-      <Container>
-        <h2 className="text-3xl font-bold text-[#0A1F4A] mb-6 text-center">
-          Latest Tuition Posts
-        </h2>
+  const { data: tuitions = [], isLoading } = useQuery({
+    queryKey: ["latest-tuitions"],
+    queryFn: async () => {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/latest-tuitions`);
+      return res.data;
+    },
+  });
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sampleTuitions.map((item) => (
+  if (isLoading) return <LoadingSpinner />;
+
+  return (
+    <section className="py-20 bg-gray-50">
+      <Container>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+          <div>
+            <h2 className="text-4xl font-extrabold text-[#0A1F4A]">
+              Latest Tuition Posts
+            </h2>
+            <p className="text-gray-500 mt-2">
+              Recently posted opportunities waiting for the right tutor.
+            </p>
+          </div>
+          <Link
+            to="/all-tuitions"
+            className="flex items-center gap-2 text-blue-600 font-bold hover:text-blue-800 transition"
+          >
+            View All Posts <FiArrowRight />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {tuitions.slice(0, 3).map((item) => (
             <div
-              key={item.id}
-              className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md transition"
+              key={item._id}
+              className="group bg-white border border-gray-100 p-8 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
             >
-              <h3 className="text-xl font-semibold text-[#0A1F4A]">
+              <div className="flex justify-between items-start mb-4">
+                <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                  {item.classLevel}
+                </span>
+                <p className="text-emerald-600 font-bold text-xl">
+                   {item.budget} <span className="text-xs text-gray-400 font-normal">BDT</span>
+                </p>
+              </div>
+
+              <h3 className="text-2xl font-bold text-[#0A1F4A] mb-3 group-hover:text-blue-600 transition">
                 {item.subject}
               </h3>
-              <p className="text-gray-600 mt-1">Class: {item.class}</p>
-              <p className="text-gray-600">Location: {item.location}</p>
-              <p className="text-emerald-600 font-semibold mt-2">
-                Salary: {item.salary}
-              </p>
+
+              <div className="flex items-center gap-2 text-gray-500 mb-6">
+                <FiMapPin className="text-red-400" />
+                <span className="text-sm font-medium">{item.location}</span>
+              </div>
 
               <Link
-                to="/tuitions"
-                className="mt-4 inline-block text-[#0A1F4A] font-medium hover:underline"
+                className="block text-center border-2 border-[#0A1F4A] text-[#0A1F4A] py-3 rounded-xl font-bold hover:bg-[#0A1F4A] hover:text-white transition-colors duration-300"
               >
-                View Details →
+                Apply Now
               </Link>
             </div>
           ))}
         </div>
+
+        {tuitions.length === 0 && (
+          <p className="text-center text-gray-400 italic py-10">No recent posts available.</p>
+        )}
       </Container>
     </section>
   );
